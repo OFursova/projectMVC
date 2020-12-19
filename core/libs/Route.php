@@ -10,15 +10,26 @@ class Route {
     public static function start(){
         self::$page = $_GET['page'] ?? '/';
         $routes = require __DIR__.'/../web.php';
+
+        $isRouteFound = false;
+        foreach ($routes as $pattern => $controllerAndMethod) {
+            preg_match('~^'.$pattern.'$~', self::$page, $matches);
+            if(!empty($matches)){
+                $isRouteFound = true;
+                break;
+            }
+        }
         
-        if (isset($routes[self::$page])){
-            list($nameController, $nameMethod) = explode('@', $routes[self::$page]);
+        if ($isRouteFound){
+            list($nameController, $nameMethod) = explode('@', $controllerAndMethod);
             if (file_exists('core/controllers/'.$nameController.'.php')) {
                 //require 'core/controllers/'.$nameController.'.php'; // switching off due to autoload in index.php
                 $pathController = 'Core\\Controllers\\'.$nameController;
                 $controller = new $pathController();
                 if (method_exists($controller, $nameMethod)) {
-                    $controller->$nameMethod();
+                    unset($matches[0]);
+
+                    $controller->$nameMethod(...$matches);
                 } else {
                     echo 'Method not found';
                 }

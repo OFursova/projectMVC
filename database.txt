@@ -1,0 +1,168 @@
+DBMS - Database Management System
+SQL - Structured Query language
+DDL – Data Definition Language
+DML – Data Manipulation Language
+
+------------------- creating table with contents ---------------------
+
+CREATE TABLE cars(
+  id int AUTO_INCREMENT PRIMARY KEY,
+  marka VARCHAR(32) NOT NULL,
+  year INT,
+  color VARCHAR(32) DEFAULT 'black'
+)
+
+CREATE TABLE users(
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(32) NOT NULL,
+  email VARCHAR(32) NOT NULL UNIQUE,
+  about TEXT,
+  gender ENUM('m', 'f') NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+--------------------- updating tables contents -----------------------
+
+UPDATE books SET new=1, price=10 WHERE id=1
+
+UPDATE books SET price=price+price*0.1
+
+----------------- adding info to the table (modifying) ---------------
+
+ALTER TABLE users ADD password VARCAR(100) NOT NULL AFTER email
+
+------------------------ deleting column --------------_--------------
+
+ALTER TABLE users DROP about
+
+------------------- add data to the table ----------------------------
+
+INSERT INTO users VALUES(1, 'John', 'johnwick@gm.com', '123', 'm', NULL)
+
+INSERT INTO users(name, email, password, gender) VALUES('Jane', 'janedoe@gm.com', '123', 'f')
+
+------------------------- deleting ----------------------------------
+​
+DELETE FROM cars ----------------- clear every row contents of a table
+
+TRUNCATE users ------------------------- clear all contents of a table
+
+DELETE from cars WHERE id=2
+
+DELETE from cars WHERE year>=2012 AND year <=2015
+
+DELETE FROM cars WHERE year IS NULL
+
+------------------------ selecting -----------------------------------
+
+SELECT * FROM `users` ------------------- select everything from table
+
+SELECT * from books WHERE price BETWEEN 10 AND 20 ---------- condition
+
+SELECT * FROM books WHERE izd IN('Питер', 'Познавательная книга плюс', 'BHV Киев') ------------------------------------------------------ multiple SELECT
+
+SELECT name, price FROM books WHERE izd IN('Питер', 'Познавательная книга плюс', 'BHV Киев') -------- resulting table will show only name and price columns
+
+--------------- column can have a nickname (AS) ---------------------
+
+SELECT name AS book, price FROM books WHERE izd IN('Питер', 'Познавательная книга плюс', 'BHV Киев') ORDER BY price
+
+------------------------- sorting ORDER BY --------------------------
+ASC - from smaller to bigger (by default)
+DESC - from bigger to smaller
+
+SELECT name AS book, price FROM books WHERE izd IN('Питер', 'Познавательная книга плюс', 'BHV Киев') ORDER BY 2, 3 DESC
+---------------------sorting first by column #2, than by col #3 in reversed order
+
+SELECT trim(name) AS book, price FROM books ORDER BY 1 -------- delete whitespace
+
+SELECT DISTINCT category FROM books --------------------- deleting repeating rows
+
+SELECT name, price FROM books WHERE name LIKE '%HTML%'
+-------------------- search by full data (% means any quantity of any characters)
+
+SELECT name, price FROM books WHERE name NOT LIKE '%HTML%'
+------------------------------------------------ seach rows where is not pattern 
+
+RLIKE ------------------------------------------------------ regular expressions
+
+------------------------ agregating functions -------------------------
+
+============= are written in SELECT. Return data of one column
+============= COUNT(*) - quantity of all rows
+============= COUNT(column_name) - quantity of all rows with not NULL value
+
+SELECT MIN(price) AS min, MAX(price) AS max, AVG(price) AS avg, SUM(price) AS sum, COUNT(*) FROM books --------------- will create a row with data about price column
+
+SELECT COUNT(*) AS total, COUNT(dateizd) AS izd FROM books --------------- will create a row with total quantity of rows and quantity of dateizd not null column rows
+
+------------------------- grouping rows --------------------------------
+
+SELECT category, themes FROM books GROUP BY category, themes ORDER BY 1, 2
+
+------------ GROUP BY AND agregating functions -------------------------
+
+============== called for each row group
+
+SELECT izd, COUNT(*) FROM books GROUP BY izd ORDER BY 2 DESC LIMIT 0, 3
+
+------------------- average price 
+
+SELECT category, AVG(price) FROM books GROUP BY category ORDER BY 2
+
+SELECT category, izd, AVG(price) FROM books WHERE izd='DiaSoft' GROUP BY category ORDER BY 2
+
+------------------ HAVING sets conditions on groups of rows
+
+SELECT category, izd, AVG(price)
+FROM books
+WHERE izd='DiaSoft'
+GROUP BY category
+HAVING AVG(price) > 50 AND category!='SQL'
+ORDER BY 2
+
+----------------- Subqueries ---------------------
+
+SELECT name, price
+FROM books
+ORDER BY 2
+LIMIT 0, 1
+
+$min = SELECT MIN(price) FROM books
+SELECT name FROM books WHERE price = $min
+
+SELECT name, price FROM books WHERE price = (SELECT MIN(price) FROM books)
+
+----------------- choose all books where pressrun is the same as id=2
+
+SELECT name, pressrun FROM books WHERE pressrun = (SELECT pressrun FROM books WHERE id=2)
+
+--------------------- complex query -----------------------------------
+
+SELECT id, name, npages FROM books WHERE npages IN (SELECT npages FROM books WHERE id=2 OR id=3) AND id NOT IN(2,3)
+
+------------------- creating foreign key -----------------------------
+
+ALTER TABLE `products` ADD FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+------------------- selecting from multiple tables -------------------
+
+SELECT products.name, categories.name FROM products, categories - not right
+
+SELECT products.name, categories.name FROM products, categories WHERE products.category_id = categories.id
+
+SELECT products.name, categories.name FROM products INNER JOIN categories ON products.category_id = categories.id
+
+SELECT p.name AS product, c.name AS category FROM products AS p INNER JOIN categories AS c ON p.category_id = c.id
+
+
+SELECT books.Name, themes.NAME, categories.Name
+FROM (books inner JOIN themes ON books.Id_Themes = themes.ID) INNER JOIN categories ON books.Id_Category = categories.Id
+
+SELECT books.Name AS name, themes.NAME AS theme, categories.Name AS category,
+CONCAT(authors.FirstName, ' ', authors.LastName) AS author
+FROM ((books inner JOIN themes ON books.Id_Themes = themes.ID) INNER JOIN categories ON books.Id_Category = categories.Id) INNER JOIN authors ON books.Id_Author = authors.ID
+
+------------------- outer join -----------------------------
+
+SELECT products.name, categories.name from products LEFT OUTER JOIN categories ON products.category_id = categories.id
