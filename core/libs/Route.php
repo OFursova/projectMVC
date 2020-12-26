@@ -3,6 +3,7 @@ namespace Core\Libs;
 use Core\Views\View;
 
 use Core\Controllers\MainController;
+use Core\Libs\Exceptions\NotFoundException;
 
 class Route {
     public static $page;
@@ -37,7 +38,7 @@ class Route {
                 echo 'FILE not found';
             }
         } else {
-            View::render('errors/404', [], 404);
+            throw new NotFoundException();
         }
     }
 

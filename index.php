@@ -1,7 +1,10 @@
 <?php
 
 use Core\Controllers\FileController;
+use Core\Libs\Exceptions\DbException;
+use Core\Libs\Exceptions\NotFoundException;
 use Core\Libs\Route;
+use Core\Views\View;
 
 spl_autoload_register(function($className){
     //require_once 'core/libs/Route.php';
@@ -13,7 +16,13 @@ spl_autoload_register(function($className){
     require_once $routeName.'.php';
 });
 
-Route::start();
+try {
+    Route::start();
+} catch (DbException $e) {
+   echo $e->getMessage();
+} catch (NotFoundException $e) {
+    View::render('errors/404', [], 404);
+}
 
 // ============ HOMEWORK ===================== //
 /*
