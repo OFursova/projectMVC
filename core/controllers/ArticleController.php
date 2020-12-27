@@ -52,7 +52,27 @@ class ArticleController extends Controller {
         $article->id = null;
         $article->name = $_POST['name']; 
         $article->text = $_POST['text'];
-        $article->user_id = $_POST['user_id'];
+
+        function getUserId(){
+        $users = User::findAll();
+        foreach ($users as $user) {
+            if ($_POST['user_id'] == $user->name) {
+                $id = $user->id;
+            } else {
+                $user = new User();
+                $user->id = null;
+                $user->name = $_POST['user_id'];
+                $user->email = $_POST['user_id'].'@gmail.com';
+                $user->password = 'password';
+                $user->token = 'password';
+                $user->save();
+                $id = count($users);
+            }
+        }
+        return $id;
+        }
+        
+        $article->user_id = getUserId();
 
         $article->save();
         $this->redirect('/');

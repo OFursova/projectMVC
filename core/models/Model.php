@@ -24,7 +24,7 @@ abstract class Model {
         }
         
     }
-    private function propertiesToDb()
+    public function propertiesToDb()
     {
         $reflector = new \ReflectionObject($this);
         $properties = $reflector->getProperties();

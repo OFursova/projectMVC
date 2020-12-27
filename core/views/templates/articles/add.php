@@ -13,7 +13,7 @@
 </div>
 <div class="form-group">
     <label for="user_id">Author id:</label>
-    <input type="number" id="user_id" name="user_id" class="form-control">
+    <input type="text" id="user_id" name="user_id" class="form-control">
 </div>
 <button class="btn btn-primary">Save</button>
 </form>
