@@ -2,9 +2,12 @@
 return [
     '/' => 'MainController@index',
     'contacts' => 'MainController@contacts',
-    'acticle/(\d+)' => 'ArticleController@show',
-    'acticle/(\d+)/edit' => 'ArticleController@edit',
-    'acticle/(\d+)/edit-form' => 'ArticleController@editForm',
+    'article/(\d+)' => 'ArticleController@show',
+    'article/(\d+)/edit' => 'ArticleController@edit',
+    'article/(\d+)/edit-form' => 'ArticleController@editForm',
+    'article/add' => 'ArticleController@add',
+    'article/add-form' => 'ArticleController@addForm',
+    'article/(\d+)/delete' => 'ArticleController@delete',
     'pdf-article' => 'ArticleController@pdf',
     'excel-article' => 'ArticleController@excel',
 ];

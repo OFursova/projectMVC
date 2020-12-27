@@ -8,6 +8,6 @@ class Article extends Model{
 
     public function getAuthor()
     {
-        return User::getById($this->id);
+        return User::getById($this->user_id);
     }
 }

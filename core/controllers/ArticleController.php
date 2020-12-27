@@ -27,12 +27,47 @@ class ArticleController extends Controller {
          View::render('errors/404', [], 404);
          return;
         }
-        $article->name = $_POST['newArticle'] ? $_POST['newArticle']: 'New Article';
-        $article->text = $_POST['newArText'] ? $_POST['newArText']:'Text for New Article';
-        $this->dump($article);
+        $article->name = $_POST['name'] ? $_POST['name']: 'New Article';
+        $article->text = $_POST['text'] ? $_POST['text']:'Text for New Article';
+        $article->user_id = $_POST['user_id'] ? $_POST['user_id'] : 'New User';
+        
+        $article->save();
+        $this->redirect('/');
+    }
 
-        // save data to db then reload
-        // view edit form
+    public function editForm($id)
+    {
+        $article = Article::getById($id);
+        if(!$article){
+         View::render('errors/404', [], 404);
+         return;
+        }
+        $users = User::findAll();
+        View::render('articles/edit', compact('article', 'users'));
+    }
+
+    public function add()
+    {
+        $article = new Article();
+        $article->id = null;
+        $article->name = $_POST['name']; 
+        $article->text = $_POST['text'];
+        $article->user_id = $_POST['user_id'];
+
+        $article->save();
+        $this->redirect('/');
+    }
+
+    public function addForm()
+    {
+        View::render('articles/add');
+    }
+
+    public function delete($id)
+    {
+        $article = Article::getById($id);
+        $article->delete($id);
+        $this->redirect('/');
     }
 
     public function pdf(){
