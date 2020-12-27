@@ -6,6 +6,8 @@ use Core\Libs\Exceptions\NotFoundException;
 use Core\Libs\Route;
 use Core\Views\View;
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 spl_autoload_register(function($className){
     //require_once 'core/libs/Route.php';
     $pathArr = explode('\\', $className);
