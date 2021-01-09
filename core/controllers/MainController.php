@@ -18,4 +18,9 @@ class MainController extends Controller {
     {
         View::render('main/contacts');
     }
+
+    public function import()
+    {
+        View::render('main/import');
+    }
 }

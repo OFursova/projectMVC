@@ -10,4 +10,6 @@ return [
     'article/(\d+)/delete' => 'ArticleController@delete',
     'pdf-article' => 'ArticleController@pdf',
     'excel-article' => 'ArticleController@excel',
+    'import' => 'MainController@import',
+    'import-data' => 'ProductController@importData',
 ];

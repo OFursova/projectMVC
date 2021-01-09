@@ -1,0 +1,23 @@
+Почему при insert id инкрементируются не на 1. Ошибка в модели?
+
+private function insert(array $properties)
+    {
+        $columns = [];
+        $values = [];
+        $placeholders = [];
+        foreach ($properties as $column => $value) {
+            if ($column == 'id') {
+                continue;
+            } else {
+            $columns[] = $column;
+            $values[] = $value;
+            $placeholders[] = '?';
+            }
+        }
+        $pdo = Db::getInstance();
+        $sql = 'INSERT INTO '.static::getTableName().' ('.implode(', ', $columns).') VALUES ('.implode(', ', $placeholders).')';
+        //echo $sql;
+        //print_r($values);
+        $pdo->query($sql, $values, static::class);
+
+    }

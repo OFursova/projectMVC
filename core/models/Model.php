@@ -4,6 +4,8 @@ namespace Core\Models;
 use core\Libs\Db;
 
 abstract class Model {
+    abstract protected static function getTableName();
+    
     public static function findAll() {
         $pdo = Db::getInstance();
         return $pdo->query('SELECT * FROM '.static::getTableName(), [], static::class);
@@ -13,15 +15,46 @@ abstract class Model {
         $result = $pdo->query('SELECT * FROM '.static::getTableName().' WHERE id=:id', ['id'=> $id], static::class);
         return $result ? $result[0] : null;
     }
+    public static function findOneByColumn(string $columnName, $value): ?self
+    {
+        $pdo = DB::getInstance();
+        $result = $pdo->query(
+            'SELECT * FROM ' . static::getTableName() . ' WHERE ' . $columnName . ' = :value LIMIT 1;',
+            [':value' => $value],
+            static::class
+        );
+        if ($result === []) {
+            return null;
+        }
+        return $result[0];
+    }
+    public static function findByName($value): ?self
+    {
+        $pdo = DB::getInstance();
+        $result = $pdo->query(
+            'SELECT * FROM ' . static::getTableName() . ' WHERE name = :value LIMIT 1;',
+            [':value' => $value],
+            static::class
+        );
+        if ($result === []) {
+            return null;
+        }
+        return $result[0];
+    }
     public function save()
     {
         $properties = $this->propertiesToDb();
-        //echo print_r($properties, true);
-        if($this->id !== null){
-            $this->update($properties);
-        } else {
-            $this->insert($properties);
-        }
+        //echo 'PROPS '.print_r($properties, true);
+        // if($this->id !== null){
+        //     $this->update($properties);
+        // } else {
+        //     $this->insert($properties);
+        // }
+        if(isset($this->id)){
+                $this->update($properties);
+            } else {
+                $this->insert($properties);
+            }
         
     }
     public function propertiesToDb()
@@ -71,5 +104,4 @@ abstract class Model {
         $pdo = Db::getInstance();
         $result = $pdo->query('DELETE FROM '.static::getTableName().' WHERE id=:id', ['id'=> $id], static::class);
     }
-    abstract protected static function getTableName();
 }

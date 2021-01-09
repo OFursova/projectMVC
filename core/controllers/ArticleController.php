@@ -49,24 +49,22 @@ class ArticleController extends Controller {
     public function add()
     {
         $article = new Article();
-        $article->id = null;
         $article->name = $_POST['name']; 
         $article->text = $_POST['text'];
 
         function getUserId(){
+        if (User::findByName($_POST['user_id']) == null) {
+            $user = new User();
+            $user->name = $_POST['user_id'];
+            $user->email = $_POST['user_id'].'@gmail.com';
+            $user->password = 'password';
+            $user->token = 'password';
+            $user->save();
+        }
         $users = User::findAll();
         foreach ($users as $user) {
             if ($_POST['user_id'] == $user->name) {
                 $id = $user->id;
-            } else {
-                $user = new User();
-                $user->id = null;
-                $user->name = $_POST['user_id'];
-                $user->email = $_POST['user_id'].'@gmail.com';
-                $user->password = 'password';
-                $user->token = 'password';
-                $user->save();
-                $id = count($users);
             }
         }
         return $id;
